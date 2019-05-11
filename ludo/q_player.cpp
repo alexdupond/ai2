@@ -1,21 +1,21 @@
-#include "q_learning_player.h"
+#include "q_player.h"
 #include <random>
 #include <sstream>
 #include <fstream>
 
-q_learning_player::q_learning_player():
+q_player::q_player():
     pos_start_of_turn(16),
     pos_end_of_turn(16),
     dice_roll(0)
 {
-}
-
-/*
-int q_learning_player::get_reward(){
     
 }
 
-bool q_learning_player::loadQTable(string &filename, vector<vector<double>> &vec){
+int q_player::get_reward(){
+    
+}
+
+bool q_player::loadQTable(string &filename, vector<vector<double>> &vec){
     std::string line;
     ifstream file(filename); 
     while (std::getline(file, line)) {
@@ -30,7 +30,7 @@ bool q_learning_player::loadQTable(string &filename, vector<vector<double>> &vec
     return true; 
 }
 
-bool q_learning_player::saveQTable(string &filename, vector<vector<double>> &vec){
+bool q_player::saveQTable(string &filename, vector<vector<double>> &vec){
     std::ofstream out_file(filename);
     for (const auto& i : vec) {
         for (const auto& j : i) {
@@ -41,10 +41,8 @@ bool q_learning_player::saveQTable(string &filename, vector<vector<double>> &vec
 
     return true; 
 }
-*/
-int q_learning_player::make_decision(){
 
-
+int q_player::make_decision(){
     if(dice_roll == 6){
         for(int i = 0; i < 4; ++i){
             if(pos_start_of_turn[i]<0){
@@ -71,14 +69,14 @@ int q_learning_player::make_decision(){
     return -1;
 }
 
-void q_learning_player::start_turn(positions_and_dice relative){
+void q_player::start_turn(positions_and_dice relative){
     pos_start_of_turn = relative.pos;
     dice_roll = relative.dice;
     int decision = make_decision();
     emit select_piece(decision);
 }
 
-void q_learning_player::post_game_analysis(std::vector<int> relative_pos){
+void q_player::post_game_analysis(std::vector<int> relative_pos){
     pos_end_of_turn = relative_pos;
     bool game_complete = true;
     for(int i = 0; i < 4; ++i){
