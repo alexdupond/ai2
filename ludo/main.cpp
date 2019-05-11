@@ -2,6 +2,7 @@
 #include <QApplication>
 #include "game.h"
 #include <vector>
+#include "q_learning_player.hpp"
 #include "ludo_player.h"
 #include "ludo_player_random.h"
 #include "positions_and_dice.h"
@@ -12,8 +13,10 @@ int main(int argc, char *argv[]){
     QApplication a(argc, argv);
     qRegisterMetaType<positions_and_dice>();
 
+    int nItterations = 1000; 
+
     //instanciate the players here
-    ludo_player p1;
+    q_learning_player p1(nItterations);
     ludo_player_random p2, p3, p4;
 
     game g;
@@ -52,7 +55,7 @@ int main(int argc, char *argv[]){
     QObject::connect(&g, SIGNAL(player4_end(std::vector<int>)),    &p4,SLOT(post_game_analysis(std::vector<int>)));
     QObject::connect(&p4,SIGNAL(turn_complete(bool)),              &g, SLOT(turnComplete(bool)));
 
-    for(int i = 0; i < 10000; ++i){
+    for(int i = 0; i < 1000; ++i){
         g.start();
         a.exec();
         g.reset();
