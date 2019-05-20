@@ -4,7 +4,6 @@
 #include <vector>
 #include "positions_and_dice.h"
 #include "ludo_player.h"
-#include "q_learning_player.h"
 #include "ludo_player_random.h"
 #include "q_player.h"
 
@@ -14,22 +13,22 @@ int main(int argc, char *argv[]){
     QApplication a(argc, argv);
     qRegisterMetaType<positions_and_dice>();
 
-    int nItterations = 1000; 
+    int nItterations = 1000000;
 
     //instanciate the players here
-    q_player p1;
-    //ludo_player p1; 
+    q_player p1(nItterations);
+    //ludo_player p2, p3, p4;
     ludo_player_random p2, p3, p4;
 
     game g;
-    g.setGameDelay(000); //if you want to see the game, set a delay
+    g.setGameDelay(000); //if you want sto see the game, set a delay
 
-    //* Add a GUI <-- remove the '/' to uncomment block
+    /* Add a GUI <-- remove the '/' to uncomment block
     Dialog w;
     QObject::connect(&g,SIGNAL(update_graphics(std::vector<int>)),&w,SLOT(update_graphics(std::vector<int>)));
     QObject::connect(&g,SIGNAL(set_color(int)),                   &w,SLOT(get_color(int)));
     QObject::connect(&g,SIGNAL(set_dice_result(int)),             &w,SLOT(get_dice_result(int)));
-    QObject::connect(&g,SIGNAL(declare_winner(int)),              &w,SLOT(get_winner()));
+   // QObject::connect(&g,SIGNAL(declare_winner(int)),              &w,SLOT(get_winner()));
     QObject::connect(&g,SIGNAL(close()),&a,SLOT(quit()));
     w.show();
     /*/ //Or don't add the GUI
@@ -38,7 +37,6 @@ int main(int argc, char *argv[]){
 
     //set up for each player
     QObject::connect(&g, SIGNAL(player1_start(positions_and_dice)),&p1,SLOT(start_turn(positions_and_dice)));
-    cout << "HEj " << endl; 
     QObject::connect(&p1,SIGNAL(select_piece(int)),                &g, SLOT(movePiece(int)));
     QObject::connect(&g, SIGNAL(player1_end(std::vector<int>)),    &p1,SLOT(post_game_analysis(std::vector<int>)));
     QObject::connect(&p1,SIGNAL(turn_complete(bool)),              &g, SLOT(turnComplete(bool)));
@@ -58,10 +56,17 @@ int main(int argc, char *argv[]){
     QObject::connect(&g, SIGNAL(player4_end(std::vector<int>)),    &p4,SLOT(post_game_analysis(std::vector<int>)));
     QObject::connect(&p4,SIGNAL(turn_complete(bool)),              &g, SLOT(turnComplete(bool)));
 
-    for(int i = 0; i < nItterations; ++i){
+    QObject::connect(&g,SIGNAL(declare_winner(int)),              &p1, SLOT(get_winner(int)));
+
+    //g.start();
+    //a.exec();
+
+    for(int i = 0; i < nItterations * 2; ++i){
         g.start();
         a.exec();
         g.reset();
+    
     }
+
     return 0;
 }
